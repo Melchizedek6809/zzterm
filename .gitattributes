@@ -1,0 +1,10 @@
+* text eol=lf
+*.png binary
+
+*.c linguist-language=C
+*.h linguist-language=C
+*.s linguist-language=Assembly
+
+vendor/** linguist-vendored=true
+tools/** linguist-vendored=true
+src/tmp/ linguist-generated

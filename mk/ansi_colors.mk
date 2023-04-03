@@ -1,0 +1,19 @@
+ANSI_RESET  := [0m
+
+ANSI_BLACK  := [0;30m
+ANSI_RED    := [0;31m
+ANSI_GREEN  := [0;32m
+ANSI_YELLOW := [0;33m
+ANSI_BLUE   := [0;34m
+ANSI_PINK   := [0;35m
+ANSI_CYAN   := [0;36m
+ANSI_GREY   := [0;37m
+
+ANSI_BG_BLACK  := [0;40m
+ANSI_BG_RED    := [0;41m
+ANSI_BG_GREEN  := [0;42m
+ANSI_BG_YELLOW := [0;43m
+ANSI_BG_BLUE   := [0;44m
+ANSI_BG_PINK   := [0;45m
+ANSI_BG_CYAN   := [0;46m
+ANSI_BG_GREY   := [0;47m
