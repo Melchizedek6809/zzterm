@@ -2,9 +2,8 @@ CC               := clang
 
 NASMFLAGS        := -f macho64 --prefix "_"
 
-CLIENT_LIBS      := -F /Library/Frameworks -framework SDL2 -framework OpenGL
-CLIENT_CFLAGS    := -I /Library/Frameworks/SDL2.framework/Headers -DGL_SILENCE_DEPRECATION
-
+LIBS             := -F /Library/Frameworks -framework SDL2 -framework OpenGL
+CFLAGS           := -I /Library/Frameworks/SDL2.framework/Headers -DGL_SILENCE_DEPRECATION
 OSX_APP          := releases/macos/zzterm-$(VERSION_NAME).app
 
 .PHONY: release.macos
@@ -17,7 +16,7 @@ releases/macos/zzterm-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Frameworks/
 releases/macos/zzterm-macos-$(VERSION_NAME).tgz: $(OSX_APP)/Contents/Resources/zzterm.icns
 	cd releases/macos/ && tar -czf zzterm-macos-$(VERSION_NAME).tgz zzterm-$(VERSION_NAME).app
 
-$(OSX_APP)/Contents/MacOS/zzterm: $(SOURCES) $(TMP_SOURCES)
+$(OSX_APP)/Contents/MacOS/zzterm: $(SOURCES)
 	mkdir -p $(OSX_APP)/Contents/MacOS
 	$(CC) $^ -o $@ $(RELEASE_OPTIMIZATION) $(CFLAGS) $(CINCLUDES) $(WARNINGS) $(LIBS)
 	strip -SxX $@
