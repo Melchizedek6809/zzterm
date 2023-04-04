@@ -1,0 +1,9 @@
+-I/usr/include/SDL2
+-D_REENTRANT
+-D_GNU_SOURCE
+--std=c99
+-Wall
+-Wextra
+-Wshadow
+-Wcast-align
+-Wno-missing-braces

@@ -8,7 +8,9 @@
 #include "../gfx/mat.h"
 #include "../gfx/shader.h"
 #include "../gfx/texture.h"
+#include "../term.h"
 #include "../sdl/sdl.h"
+#include "../sdl/textInput.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,28 +50,38 @@ void initGL(){
 	if(!glInitialize()){
 		exit(3);
 	}
-	glClearColor( 0.2f, 0.f, 0.f, 1.f );
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	glViewport(0,0,screenWidth,screenHeight);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 
 	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc( GL_LEQUAL );
 
-	glScissor(0,0,screenWidth,screenHeight);
-	glEnable(GL_SCISSOR_TEST);
+	//glScissor(0,0,screenWidth,screenHeight);
+	//glEnable(GL_SCISSOR_TEST);
 }
 
 static void renderTerminal(){
-
+	if(textInputChanged){
+		textInputChanged = false;
+		for(int i=0;i<textInputBufferLen;i++){
+			const unsigned char c = textInputBuffer[i];
+			mainTerm->buffer[i] = c;
+			if(c == 0){break;}
+		}
+		mainTerm->dirty = true;
+	}
+	termBufferDraw(mainTerm);
 }
 
 /* Render a single Frame */
 void renderFrame(){
+	matOrtho(matOrthoProj, 0, screenWidth, screenHeight, 0, -1, 16);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderTerminal();
 	swapWindow();

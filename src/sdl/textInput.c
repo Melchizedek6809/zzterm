@@ -13,6 +13,7 @@ int  textInputBufferLen = 0;
 int  textInputCursorPos = 0;
 bool textInputStarted   = true;
 char textInputBuffer[65536];
+bool textInputChanged = false;
 
 int keyboardCmdKey(const SDL_Event *e){
 	#ifdef __APPLE__
@@ -30,8 +31,10 @@ int textInputActive(){
 
 void textInputEnter(){
 	if(!textInputActive()){return;}
-	textInputBuffer[textInputBufferLen] = 0;
 	printf("Input: '%s'\n", textInputBuffer);
+	textInputCursorPos = textInputBufferLen = 0;
+	textInputBuffer[textInputBufferLen] = 0;
+	textInputChanged = true;
 }
 
 void textInputDelSelection(){
@@ -47,6 +50,7 @@ void textInputDelSelection(){
 	textInputBuffer[textInputBufferLen] = 0;
 	textInputCursorPos = sMin;
 	textInputMark = -1;
+	textInputChanged = true;
 }
 
 void textInputBackspace(int moveForward){
@@ -61,6 +65,7 @@ void textInputBackspace(int moveForward){
 	--textInputCursorPos;
 	--textInputBufferLen;
 	textInputBuffer[textInputBufferLen] = 0;
+	textInputChanged = true;
 }
 
 void textInputAppend(const char *s){
@@ -79,6 +84,7 @@ void textInputAppend(const char *s){
 	if(textInputCursorPos >= 255){ textInputCursorPos = 255; }
 	if(textInputBufferLen >= 255){ textInputBufferLen = 255; }
 	textInputBuffer[textInputBufferLen] = 0;
+	textInputChanged = true;
 }
 
 void textInputCopy(){

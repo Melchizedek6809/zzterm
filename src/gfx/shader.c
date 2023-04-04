@@ -13,15 +13,15 @@ shader  shaderList[16];
 int     shaderCount = 0;
 uint    activeProgram = 0;
 
-shader *sTextMesh = NULL;
+shader *sTermBuffer = NULL;
 
-extern u8 shader_textShaderFS_glsl_data[];
-extern u8 shader_textShaderVS_glsl_data[];
+extern u8 shader_textShader_frag_data[];
+extern u8 shader_textShader_vert_data[];
 
 static shader *shaderNew(shader *slot,const char *name,const char *vss,const char *fss,uint attrMask);
 
 void shaderInit(){
-	sTextMesh  = shaderNew(NULL, "TextMesh",  (const char *)shader_textShaderVS_glsl_data,     (const char *)shader_textShaderFS_glsl_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_TEX | SHADER_ATTRMASK_COLOR);
+	sTermBuffer  = shaderNew(NULL, "termBuffer",  (const char *)shader_textShader_vert_data,     (const char *)shader_textShader_frag_data,     SHADER_ATTRMASK_POS | SHADER_ATTRMASK_BUF_POS);
 }
 
 static void shaderPrintLog(uint obj, const char *msg, const char *src){
@@ -128,13 +128,14 @@ static void shaderCompile(shader *s,const char *name){
 	compileFragmentShader(s,name);
 
 	if(s->attrMask & SHADER_ATTRMASK_POS){glBindAttribLocation(s->pID,SHADER_ATTRIDX_POS,"pos");}
-	if(s->attrMask & SHADER_ATTRMASK_TEX){glBindAttribLocation(s->pID,SHADER_ATTRIDX_TEX,"tex");}
-	if(s->attrMask & SHADER_ATTRMASK_COLOR){glBindAttribLocation(s->pID,SHADER_ATTRIDX_COLOR,"color");}
+	if(s->attrMask & SHADER_ATTRMASK_BUF_POS){glBindAttribLocation(s->pID,SHADER_ATTRIDX_BUF_POS,"bufPos");}
 
 	glLinkProgram(s->pID);
 	shaderPrintLog(s->pID,"Program","");
 
 	s->lMVP        = glGetUniformLocation(s->pID,"matMVP");
+	s->lCurTex     = glGetUniformLocation(s->pID,"curTex");
+	s->lTextBuf    = glGetUniformLocation(s->pID,"textBuf");
 }
 
 static shader *shaderNew(shader *slot,const char *name,const char *vss,const char *fss,uint attrMask){
@@ -161,6 +162,8 @@ static shader *shaderNew(shader *slot,const char *name,const char *vss,const cha
 
 	s->attrMask   = attrMask;
 	s->lMVP       = -1;
+	s->lCurTex    = -1;
+	s->lTextBuf   = -1;
 
 	shaderCompile(s,name);
 	return s;
@@ -193,3 +196,18 @@ void shaderMatrix(shader *s, float mvp[16]){
 	glUniformMatrix4fv(s->lMVP,1,GL_FALSE,mvp);
 }
 
+void shaderCurTex(shader *s, GLuint texUnit){
+	if(s->lCurTex == -1){
+		fprintf(stderr,"%s has no location for curTex Uniform\n", s->name);
+		exit(123);
+	}
+	glUniform1i(s->lCurTex, texUnit);
+}
+
+void shaderTextBuf(shader *s, GLuint texUnit){
+	if(s->lTextBuf == -1){
+		fprintf(stderr,"%s has no location for textBuf Uniform\n", s->name);
+		exit(123);
+	}
+	glUniform1i(s->lTextBuf, texUnit);
+}

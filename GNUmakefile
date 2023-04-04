@@ -15,7 +15,7 @@ WARNINGS             := -Wall -Werror -Wextra -Wshadow -Wcast-align -Wno-missing
 RELEASE_OPTIMIZATION := -O3 -flto -ffast-math -freciprocal-math -fno-math-errno
 ARCH                 := $(shell uname -m)
 GFX_ASSETS           := $(shell find gfx -type f -name '*')
-SHADER_ASSETS        := $(shell find src/shader -type f -name '*.glsl')
+SHADER_ASSETS        := $(shell find src/shader -type f \( -name '*.vert' -o -name '*.frag' \))
 SOURCES              := $(shell find src -type f -name '*.c') $(shell find vendor -type f -name '*.c') src/tmp/assets.c
 OBJS                 := ${SOURCES:.c=.o}
 DEPS                 := ${SOURCES:.c=.d}
@@ -67,8 +67,12 @@ src/tmp/assets.h: src/tmp/assets.c
 	@true
 
 .PHONY: optimizegfx
-optimizegfx: all
+optimizegfx:
 	tools/optimizegfx $(GFX_ASSETS)
+
+.PHONY: format
+format:
+	clang-format -i ./src/**.[ch]
 
 .PHONY: run
 run: all

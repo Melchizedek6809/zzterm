@@ -33,6 +33,16 @@ void textureLoadSurface(texture *t, uint w, uint h, const void *data, bool linea
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
+void textureLoadTermBuffer(texture *t, uint w, uint h, const void *data){
+	t->w = w;
+	t->h = h;
+	if(t->ID == 0){glGenTextures(1, &t->ID);}
+	glBindTexture(GL_TEXTURE_2D, t->ID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, w, h, 0, GL_RG, GL_UNSIGNED_BYTE, data);
+}
+
 static void textureLoad(texture *t, const u8 *data, const uint dataLen){
 	u8 *pixels = NULL;
 	if(lodepng_decode32(&pixels, &t->w, &t->h, data, dataLen)){
